@@ -1,0 +1,16 @@
+{
+  "appId": "app.iparrot.messenger",
+  "appName": "IParrot",
+  "webDir": "../ui/dist",
+  "backgroundColor": "#2D3691",
+  "server": {
+    "androidScheme": "https",
+    "cleartext": true
+  },
+  "android": {
+    "allowMixedContent": true
+  },
+  "ios": {
+    "contentInset": "never"
+  }
+}

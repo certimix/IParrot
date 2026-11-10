@@ -1,0 +1,19 @@
+{
+  "name": "iparrot-mobile",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Casca Android/iOS do IParrot (Capacitor). A interface vem de ../ui e o núcleo de ../core via gomobile.",
+  "scripts": {
+    "sync": "cap sync",
+    "android": "cap open android",
+    "ios": "cap open ios"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.0.0",
+    "@capacitor/core": "^7.0.0",
+    "@capacitor/ios": "^7.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.0.0"
+  }
+}

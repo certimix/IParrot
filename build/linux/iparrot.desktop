@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=IParrot
+Comment=Mensageiro ponto a ponto, criptografado e sem servidor
+Exec=iparrot
+Icon=iparrot
+Terminal=false
+Categories=Network;InstantMessaging;
+StartupWMClass=iparrot

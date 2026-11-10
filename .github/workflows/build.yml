@@ -1,0 +1,151 @@
+name: Build IParrot
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: '22'
+
+jobs:
+  ui:
+    name: Interface (typecheck + build)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: ui/package-lock.json
+      - run: make ui
+
+  linux:
+    name: Linux (desktop + daemon)
+    runs-on: ubuntu-24.04
+    needs: ui
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: ui/package-lock.json
+      - name: Bibliotecas do WebView
+        run: sudo apt-get update && sudo apt-get install -y build-essential libgtk-3-dev libwebkit2gtk-4.1-dev
+      - run: make deps tools
+      - name: Testes do núcleo
+        run: go test -tags "fts5 sqlite sqlite_unlock_notify" ./core/... ./ui/...
+      - run: make desktop-linux
+      - run: make daemon
+      - name: Empacotar
+        run: |
+          mkdir -p dist/iparrot-linux-amd64
+          cp build/bin/iparrot build/bin/iparrotd build/linux/iparrot.desktop build/appicon.png dist/iparrot-linux-amd64/
+          tar -C dist -czf iparrot-linux-amd64.tar.gz iparrot-linux-amd64
+      - uses: actions/upload-artifact@v4
+        with:
+          name: iparrot-linux-amd64
+          path: iparrot-linux-amd64.tar.gz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: go-sum
+          path: go.sum
+
+  windows:
+    name: Windows (.exe)
+    runs-on: windows-latest
+    needs: ui
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: ui/package-lock.json
+      - name: Conferir compilador C (MinGW)
+        shell: bash
+        run: gcc --version
+      # No Windows os comandos vão direto (sem make), equivalentes a `make deps tools desktop-windows`.
+      - name: Dependências Go e CLI do Wails
+        shell: bash
+        run: |
+          go mod tidy
+          go install github.com/wailsapp/wails/v2/cmd/wails@v2.17.1
+      - name: Interface
+        shell: bash
+        working-directory: ui
+        run: npm ci && npm run build
+      - name: IParrot.exe
+        shell: bash
+        run: wails build -s -skipbindings -platform windows/amd64 -tags "fts5 sqlite sqlite_unlock_notify" -ldflags "-checklinkname=0" -webview2 embed -o IParrot.exe
+      - uses: actions/upload-artifact@v4
+        with:
+          name: iparrot-windows-amd64
+          path: build/bin/IParrot.exe
+
+  android:
+    name: Android (APK)
+    runs-on: ubuntu-24.04
+    needs: ui
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: |
+            ui/package-lock.json
+            mobile/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: NDK para o gomobile
+        run: echo "ANDROID_NDK_HOME=$ANDROID_NDK_LATEST_HOME" >> "$GITHUB_ENV"
+      - run: make deps
+      - run: make android
+      - uses: actions/upload-artifact@v4
+        with:
+          name: iparrot-android-debug
+          path: mobile/android/app/build/outputs/apk/debug/*.apk
+
+  ios:
+    name: iOS (simulador, sem assinatura)
+    runs-on: macos-latest
+    needs: ui
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: |
+            ui/package-lock.json
+            mobile/package-lock.json
+      - run: make deps
+      - run: make ios
+      # Para gerar um .ipa instalável é preciso uma conta Apple Developer:
+      # ver docs/BUILD.md, seção "iOS: assinatura e TestFlight".

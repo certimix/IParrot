@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">IParrot</string>
+    <string name="title_activity_main">IParrot</string>
+    <string name="package_name">app.iparrot.messenger</string>
+    <string name="custom_url_scheme">app.iparrot.messenger</string>
+    <string name="node_service_title">IParrot conectado</string>
+    <string name="node_service_text">Mantendo você acessível para receber mensagens.</string>
+    <string name="node_service_stop">Desconectar</string>
+    <string name="node_channel_name">Conexão do IParrot</string>
+    <string name="node_channel_description">Aviso fixo enquanto o IParrot está conectado à rede.</string>
+    <string name="message_channel_name">Mensagens</string>
+    <string name="message_channel_description">Avisos de mensagens e pedidos de contato novos.</string>
+</resources>

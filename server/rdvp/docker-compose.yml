@@ -1,0 +1,47 @@
+# Servidor de apoio do IParrot, isolado de tudo que já roda na máquina.
+#
+#   docker compose -p iparrot-rdvp up -d
+#
+# O projeto (-p) dá a todos os nomes o prefixo iparrot-rdvp, e a rede é só
+# deste compose: nada se mistura com outros containers do servidor.
+#
+# Antes de subir, gere a chave uma vez (ver README.md):
+#   docker compose -p iparrot-rdvp run --rm --entrypoint rdvp rdvp genkey > rdvp.key
+
+name: iparrot-rdvp
+
+services:
+  rdvp:
+    build:
+      context: ../..
+      dockerfile: server/rdvp/Dockerfile
+    image: iparrot-rdvp:latest
+    container_name: iparrot-rdvp
+    restart: unless-stopped
+    # O libp2p precisa ver a porta real para anunciar o endereço certo, por
+    # isso as portas são fixas e iguais dentro e fora.
+    ports:
+      - '4040:4040/tcp'
+      - '4141:4141/udp'
+    volumes:
+      - iparrot-rdvp-data:/data
+    environment:
+      # IP ou domínio público deste servidor — sem isso o rdvp anuncia o IP
+      # interno do container e ninguém de fora consegue chegar nele.
+      IPARROT_PUBLIC_ADDR: ${IPARROT_PUBLIC_ADDR:?defina IPARROT_PUBLIC_ADDR no arquivo .env}
+      IPARROT_RDVP_KEY: ${IPARROT_RDVP_KEY:?defina IPARROT_RDVP_KEY no arquivo .env}
+    command:
+      - serve
+      - -pk=${IPARROT_RDVP_KEY}
+      - -db=/data/rdvp.sqlite
+      - -l=/ip4/0.0.0.0/tcp/4040,/ip4/0.0.0.0/udp/4141/quic-v1
+      - -announce=/ip4/${IPARROT_PUBLIC_ADDR}/tcp/4040,/ip4/${IPARROT_PUBLIC_ADDR}/udp/4141/quic-v1
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
+
+volumes:
+  iparrot-rdvp-data:
+    name: iparrot-rdvp-data

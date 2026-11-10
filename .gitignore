@@ -1,0 +1,33 @@
+# builds
+/build/bin/
+/ui/dist/*
+!/ui/dist/.gitkeep
+/ui/dist-single/
+/ui/wailsjs/
+node_modules/
+*.aar
+*.xcframework
+/mobile/android/app/src/main/assets/public/
+/mobile/android/app/src/main/assets/capacitor.config.json
+/mobile/android/app/src/main/assets/capacitor.plugins.json
+/mobile/ios/App/App/public/
+/mobile/ios/App/Pods/
+/mobile/ios/App/App/capacitor.config.json
+/mobile/ios/App/App/config.xml
+
+# segredos do servidor de apoio
+/server/rdvp/.env
+/server/rdvp/rdvp.key
+
+# dados locais
+/data/
+keys.json
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+
+# editores / SO
+.DS_Store
+.idea/
+.vscode/
+*.log

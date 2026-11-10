@@ -1,0 +1,12 @@
+Copyright 2026 os autores do IParrot.
+
+O IParrot é licenciado sob a Apache License, Version 2.0 (ver LICENSE-APACHE)
+ou sob a licença MIT (ver LICENSE-MIT), à sua escolha — o mesmo esquema de
+licença dupla usado pelo Berty e pelo weshnet, dos quais ele deriva.
+
+Partes de terceiros incluídas neste repositório e suas licenças estão
+descritas em NOTICE.md; os textos integrais ficam em THIRD_PARTY_LICENSES/ e
+também dentro do aplicativo, em Configurações > Sobre > Inspirações.
+
+Antes de publicar: troque "os autores do IParrot" pelo titular correto
+(pessoa ou empresa) neste arquivo e em LICENSE-MIT.
