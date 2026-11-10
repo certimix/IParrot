@@ -118,18 +118,29 @@ jobs:
             mobile/package-lock.json
       # Os dois JDKs, porque as duas ferramentas discordam: o gomobile gera o
       # .aar chamando `javac -source 1.7`, que o 21 recusa, e o Gradle do
-      # Capacitor (AGP 8.7) exige o 21. O último da lista vira o JAVA_HOME
-      # padrão, usado pelo Gradle; o 17 entra só no passo do gomobile.
+      # Capacitor (AGP 8.7) exige o 21.
+      #
+      # São dois passos em vez de uma lista para poder referenciar o caminho do
+      # 17 pelo output do próprio passo, sem depender do nome da variável que o
+      # runner cria. O 21 vem por último e fica como JAVA_HOME padrão, que é o
+      # que o Gradle usa.
+      - uses: actions/setup-java@v4
+        id: jdk17
+        with:
+          distribution: temurin
+          java-version: '17'
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: |
-            17
-            21
+          java-version: '21'
       - name: NDK para o gomobile
         run: echo "ANDROID_NDK_HOME=$ANDROID_NDK_LATEST_HOME" >> "$GITHUB_ENV"
       - run: make deps
-      - run: make android JAVA_HOME_GOMOBILE="$JAVA_HOME_17_X64"
+      - name: Conferir os dois JDKs
+        run: |
+          echo "padrão (Gradle):  $(javac -version 2>&1)"
+          echo "gomobile:         $('${{ steps.jdk17.outputs.path }}/bin/javac' -version 2>&1)"
+      - run: make android JAVA_HOME_GOMOBILE="${{ steps.jdk17.outputs.path }}"
       - uses: actions/upload-artifact@v4
         with:
           name: iparrot-android-debug

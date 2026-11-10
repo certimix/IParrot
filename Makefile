@@ -18,8 +18,11 @@ ANDROID_API ?= 23
 # o Gradle do Capacitor (AGP 8.7) exige o 21. Quando as duas versões estiverem
 # instaladas, aponte esta variável para a 17 e só o `bind` a usará:
 #   make android JAVA_HOME_GOMOBILE=/caminho/do/jdk-17
+#
+# O PATH entra junto de propósito: o gomobile invoca `javac` pelo PATH, não
+# pelo JAVA_HOME, então mexer só na variável não troca o compilador.
 JAVA_HOME_GOMOBILE ?=
-GOMOBILE_JAVA = $(if $(JAVA_HOME_GOMOBILE),env JAVA_HOME="$(JAVA_HOME_GOMOBILE)",)
+GOMOBILE_JAVA = $(if $(JAVA_HOME_GOMOBILE),env JAVA_HOME="$(JAVA_HOME_GOMOBILE)" PATH="$(JAVA_HOME_GOMOBILE)/bin:$(PATH)",)
 ANDROID_TARGET ?= android/arm64,android/amd64
 IOS_TARGET  ?= ios,iossimulator
 

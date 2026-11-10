@@ -57,7 +57,8 @@ cadeia discordam:
   (`Source option 7 is no longer supported`) — o Berty fixa o 17 pelo mesmo motivo;
 - o **Gradle** do Capacitor (AGP 8.7) exige o 21 (`invalid source release: 21` se for menor).
 
-Deixe o 21 como JDK padrão e aponte a variável para o 17, que será usada só no `bind`:
+Deixe o 21 como JDK padrão e aponte a variável para o 17, que será usada só no `bind` — o Makefile coloca esse JDK
+à frente do `PATH` nesse passo, porque o gomobile procura o `javac` ali e não no `JAVA_HOME`:
 
 ```bash
 make android JAVA_HOME_GOMOBILE=/usr/lib/jvm/temurin-17-jdk-amd64
