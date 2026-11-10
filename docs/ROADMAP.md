@@ -12,8 +12,11 @@
 
 ## Para a v0.1 funcionar de ponta a ponta
 
-- [ ] Rodar `make deps` com Go 1.26.5+, fazer commit do `go.sum` e corrigir o que o compilador apontar no núcleo Go.
-- [ ] Testar duas instâncias (`iparrotd` com `-dir` diferentes) trocando pedido de contato e mensagens.
+- [x] Fazer o núcleo compilar: os cinco jobs da CI estão verdes (interface, Windows, Linux, Android e iOS).
+- [ ] Rodar `make deps` numa máquina sua e **fazer commit do `go.sum`**. Sem ele, cada build resolve as ~600
+      dependências do zero: funciona, mas é mais lento e não fixa as versões.
+- [ ] **Trocar a primeira mensagem de verdade**: duas instâncias (`iparrotd` com `-dir` diferentes), ou dois
+      aparelhos, mandando pedido de contato e conversando. Compilar não é funcionar.
 - [ ] Testar IParrot ↔ Berty (compatibilidade de link e de protocolo).
 - [ ] Validar o build Windows (kubo + libp2p + SQLCipher com MinGW).
 - [ ] Validar Android em aparelho real com API 30+ (interfaces de rede) e iOS em aparelho.

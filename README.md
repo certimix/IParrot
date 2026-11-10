@@ -13,9 +13,10 @@ mensagens, um contato do IParrot consegue conversar com um contato do Berty.
 | Parte | Situação |
 | --- | --- |
 | Interface (`ui/`) | Compila, passa na checagem de tipos e foi conferida no navegador (desktop, celular, tema claro e escuro) em modo demonstração. |
-| Núcleo Go (`core/`, `main.go`, `cmd/`) | Escrito contra o código-fonte do Berty v2.472.0 e do weshnet, com cada chamada conferida uma a uma nos repositórios. As partes que só usam a biblioteca padrão (chaves de armazenamento, links, proteção de loopback) têm teste e passam — ver `core/node/keys_test.go` e `core/api/pure_test.go`. O **núcleo inteiro ainda não foi compilado**: exige Go 1.26.5 e o proxy de módulos Go, indisponíveis onde o projeto foi montado. A primeira execução da CI é o teste real; conte com ajustes. |
-| Projetos nativos (`mobile/android`, `mobile/ios`) | Gerados pelo Capacitor 7 e personalizados: ícones, plugin do núcleo, serviço em primeiro plano e notificações no Android, Keychain no iOS, permissões de câmera e rede. Ainda não compilados. |
-| CI (`.github/workflows/build.yml`) | Pronta para gerar `.exe`, binário Linux, APK de depuração e build de simulador iOS. |
+| Núcleo Go (`core/`, `main.go`, `cmd/`) | **Compila**, nas cinco frentes da CI. Escrito contra o código-fonte do Berty v2.472.0 e do weshnet, com cada chamada conferida uma a uma. Testes das partes que só usam a biblioteca padrão passam (`core/node/*_test.go`, `core/api/pure_test.go`). |
+| Projetos nativos (`mobile/android`, `mobile/ios`) | **Compilam**: APK de depuração e build de simulador iOS. Gerados pelo Capacitor 7 e personalizados: ícones, plugin do núcleo, serviço em primeiro plano e notificações no Android, Keychain no iOS, permissões de câmera e rede. |
+| CI (`.github/workflows/build.yml`) | Verde nos cinco jobs; publica `.exe`, binário Linux e APK como artefatos. |
+| **Rodando de verdade** | **Ainda não.** Compilar não é funcionar: nenhuma mensagem foi trocada entre dois aparelhos até agora. Esse é o próximo teste, e o que de fato valida o projeto. |
 
 O que já existe na interface: criar conta (só um nome, sem telefone nem e-mail), código/QR de contato, **ler o QR pela
 câmera**, pedidos de contato, conversas individuais, grupos com convite por link/QR, busca, confirmação de entrega,
@@ -78,7 +79,8 @@ Se for compilar num servidor que já roda outras coisas, use a bancada em contai
 
 ## Antes de usar com pessoas de verdade
 
-1. **Fazer a CI passar.** O núcleo Go nunca foi compilado; trate o primeiro build como a etapa de depuração.
+1. **Trocar uma mensagem entre dois aparelhos.** Os binários saem da CI, mas ninguém nunca conversou por eles. Instale
+   em dois aparelhos seus, troque o código de contato e veja a mensagem chegar antes de qualquer outra coisa.
 2. **Servidores de apoio.** Sem configuração, o nó usa o rendezvous e o relay públicos da Berty Technologies
    (endereços embutidos no weshnet). Eles não leem mensagens, mas são infraestrutura de terceiros sem garantia.
    Para produção, suba o seu com [`server/rdvp/`](server/rdvp/README.md) — um container só, que faz encontro e relay —
