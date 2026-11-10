@@ -50,13 +50,18 @@ Para um instalador, acrescente `-nsis` (requer NSIS instalado).
 
 ## Android
 
-JDK **17**, Android SDK e NDK (`ANDROID_HOME` e `ANDROID_NDK_HOME` definidos).
+Android SDK e NDK (`ANDROID_HOME` e `ANDROID_NDK_HOME` definidos) e **dois JDKs**, porque as duas ferramentas da
+cadeia discordam:
 
-O 17 não é por acaso: o gomobile gera o `.aar` chamando `javac -source 1.7`, e do JDK 21 em diante isso é erro.
-O Berty fixa a mesma versão pelo mesmo motivo.
+- o **gomobile** gera o `.aar` chamando `javac -source 1.7`, que do JDK 21 em diante é erro
+  (`Source option 7 is no longer supported`) — o Berty fixa o 17 pelo mesmo motivo;
+- o **Gradle** do Capacitor (AGP 8.7) exige o 21 (`invalid source release: 21` se for menor).
+
+Deixe o 21 como JDK padrão e aponte a variável para o 17, que será usada só no `bind`:
 
 ```bash
-make android     # mobile/android/app/build/outputs/apk/debug/app-debug.apk
+make android JAVA_HOME_GOMOBILE=/usr/lib/jvm/temurin-17-jdk-amd64
+# saída: mobile/android/app/build/outputs/apk/debug/app-debug.apk
 ```
 
 Para a Play Store: crie um keystore, configure `signingConfigs` em `mobile/android/app/build.gradle` e use

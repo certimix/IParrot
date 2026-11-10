@@ -116,17 +116,20 @@ jobs:
           cache-dependency-path: |
             ui/package-lock.json
             mobile/package-lock.json
-      # JDK 17, não 21: o gomobile gera o .aar chamando `javac -source 1.7`, e
-      # o JDK 21 recusa ("Source option 7 is no longer supported"). O Berty
-      # fixa 17 pelo mesmo motivo, e o AGP 8.7 do Capacitor funciona nele.
+      # Os dois JDKs, porque as duas ferramentas discordam: o gomobile gera o
+      # .aar chamando `javac -source 1.7`, que o 21 recusa, e o Gradle do
+      # Capacitor (AGP 8.7) exige o 21. O último da lista vira o JAVA_HOME
+      # padrão, usado pelo Gradle; o 17 entra só no passo do gomobile.
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: |
+            17
+            21
       - name: NDK para o gomobile
         run: echo "ANDROID_NDK_HOME=$ANDROID_NDK_LATEST_HOME" >> "$GITHUB_ENV"
       - run: make deps
-      - run: make android
+      - run: make android JAVA_HOME_GOMOBILE="$JAVA_HOME_17_X64"
       - uses: actions/upload-artifact@v4
         with:
           name: iparrot-android-debug

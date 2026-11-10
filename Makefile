@@ -2,7 +2,7 @@
 #
 # Requisitos: Go (versão do go.mod), Node 20+, compilador C (CGO é obrigatório por causa do SQLCipher).
 #   Desktop: Wails v2 (`make tools`) e, no Linux, libgtk-3-dev + libwebkit2gtk-4.1-dev
-#   Android: JDK 17 (o gomobile usa javac -source 1.7, recusado do JDK 21 em diante), Android SDK + NDK
+#   Android: JDK 21 para o Gradle e JDK 17 para o gomobile (ver JAVA_HOME_GOMOBILE abaixo), Android SDK + NDK
 #   iOS:     macOS com Xcode e CocoaPods
 
 GO          ?= go
@@ -14,6 +14,12 @@ WAILS       ?= wails
 WAILS_VERSION ?= v2.17.1
 GOMOBILE    ?= $(GO) run golang.org/x/mobile/cmd/gomobile
 ANDROID_API ?= 23
+# O gomobile gera o .aar chamando `javac -source 1.7`, que o JDK 21 recusa; já
+# o Gradle do Capacitor (AGP 8.7) exige o 21. Quando as duas versões estiverem
+# instaladas, aponte esta variável para a 17 e só o `bind` a usará:
+#   make android JAVA_HOME_GOMOBILE=/caminho/do/jdk-17
+JAVA_HOME_GOMOBILE ?=
+GOMOBILE_JAVA = $(if $(JAVA_HOME_GOMOBILE),env JAVA_HOME="$(JAVA_HOME_GOMOBILE)",)
 ANDROID_TARGET ?= android/arm64,android/amd64
 IOS_TARGET  ?= ios,iossimulator
 
@@ -61,7 +67,7 @@ android-core:
 	$(GO) install golang.org/x/mobile/cmd/gobind
 	$(GOMOBILE) init
 	mkdir -p mobile/android/app/libs
-	$(GOMOBILE) bind -v \
+	$(GOMOBILE_JAVA) $(GOMOBILE) bind -v \
 		-ldflags "$(GO_LDFLAGS) -extldflags=-Wl,-z,max-page-size=16384" \
 		-tags "$(GO_TAGS)" \
 		-target $(ANDROID_TARGET) -androidapi $(ANDROID_API) \
