@@ -8,6 +8,10 @@
 GO          ?= go
 # Mesmas tags e ldflags usadas pelo Berty: FTS5 para a busca e -checklinkname=0 para dependências que usam linkname.
 GO_TAGS     ?= fts5 sqlite sqlite_unlock_notify
+# Nos builds móveis entra também `noproximitytransport`, que desliga os drivers
+# BLE e Multipeer Connectivity do weshnet. O IParrot não usa transporte de
+# proximidade (está no roadmap), e no iOS esses drivers exigem o CoreBluetooth
+# linkado no projeto Xcode — sem ele, o link falha com símbolos indefinidos.
 GO_LDFLAGS  ?= -checklinkname=0
 WAILS       ?= wails
 # Deve acompanhar a versão de github.com/wailsapp/wails/v2 no go.mod.
@@ -72,7 +76,7 @@ android-core:
 	mkdir -p mobile/android/app/libs
 	$(GOMOBILE_JAVA) $(GOMOBILE) bind -v \
 		-ldflags "$(GO_LDFLAGS) -extldflags=-Wl,-z,max-page-size=16384" \
-		-tags "$(GO_TAGS)" \
+		-tags "$(GO_TAGS) noproximitytransport" \
 		-target $(ANDROID_TARGET) -androidapi $(ANDROID_API) \
 		-o mobile/android/app/libs/iparrotcore.aar \
 		./core/iparrotcore
@@ -86,7 +90,7 @@ ios-core:
 	$(GOMOBILE) init
 	CGO_CPPFLAGS=-DHAVE_GETHOSTUUID=0 $(GOMOBILE) bind -v \
 		-ldflags "$(GO_LDFLAGS)" \
-		-tags "$(GO_TAGS) nowatchdog" \
+		-tags "$(GO_TAGS) nowatchdog noproximitytransport" \
 		-target $(IOS_TARGET) -iosversion 14.0 \
 		-o mobile/ios/IParrotCore/Iparrotcore.xcframework \
 		./core/iparrotcore

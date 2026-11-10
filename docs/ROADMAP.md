@@ -34,7 +34,10 @@
 - [ ] Restaurar o backup (hoje só exporta). Precisa de um fluxo de "trocar de conta" e de validação do arquivo.
 - [ ] Criptografar o backup com uma senha escolhida pelo usuário.
 - [ ] iOS: notificações push (o Berty usa uma extensão de notificação com um segundo framework Go).
-- [ ] Transportes de proximidade (Bluetooth LE, Nearby/Multipeer) — existem no Berty, exigem drivers nativos.
+- [ ] Transportes de proximidade (Bluetooth LE, Nearby/Multipeer). Os drivers existem no weshnet, mas os builds móveis
+      passam `noproximitytransport` para desligá-los: no iOS eles exigem o CoreBluetooth linkado no projeto Xcode mais
+      as permissões de Bluetooth no Info.plist, e no Android as classes Java do driver. Para ligar, tire a tag do
+      Makefile e acrescente essas peças nativas.
 - [ ] Apagar mensagens de verdade (o Berty não tem; exigiria mexer no banco do messenger).
 - [ ] Anexos: foto, áudio e arquivo. O protocolo suporta; falta a interface e o cuidado com o tamanho.
 - [ ] Testes de ponta a ponta da interface (Playwright) no fluxo de adicionar contato e conversar.

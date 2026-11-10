@@ -22,7 +22,7 @@ código-fonte dá mais certeza do que qualquer análise de binário.
   - O `go.mod` tem `replace` necessários (go-sqlcipher, go-multiaddr para Android SDK 30+, x/mobile) — copiados.
 - **Limite encontrado**: `initutil`, `accountutils` e `gorm-sqlcipher` são `internal`. A inicialização foi reescrita
   em `core/node` e o dialeto GORM foi copiado para `core/gormsqlcipher` (MIT).
-- **Não trazido**: BLE/Nearby (transportes de proximidade), push, replicação, diretório, bots.
+- **Não trazido**: BLE/Nearby (transportes de proximidade, desligados com a tag `noproximitytransport`), push, replicação, diretório, bots.
 
 ## berty/weshnet (commit exigido pelo Berty v2.472.0)
 - **Lido**: `service_client.go`, `service.go` (`Opts`, `applyDefaults`), `pkg/ipfsutil`, `api/protocol/protocoltypes.proto`.
