@@ -50,7 +50,10 @@ Para um instalador, acrescente `-nsis` (requer NSIS instalado).
 
 ## Android
 
-JDK 21, Android SDK e NDK (`ANDROID_HOME` e `ANDROID_NDK_HOME` definidos).
+JDK **17**, Android SDK e NDK (`ANDROID_HOME` e `ANDROID_NDK_HOME` definidos).
+
+O 17 não é por acaso: o gomobile gera o `.aar` chamando `javac -source 1.7`, e do JDK 21 em diante isso é erro.
+O Berty fixa a mesma versão pelo mesmo motivo.
 
 ```bash
 make android     # mobile/android/app/build/outputs/apk/debug/app-debug.apk

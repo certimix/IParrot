@@ -2,7 +2,7 @@
 #
 # Requisitos: Go (versão do go.mod), Node 20+, compilador C (CGO é obrigatório por causa do SQLCipher).
 #   Desktop: Wails v2 (`make tools`) e, no Linux, libgtk-3-dev + libwebkit2gtk-4.1-dev
-#   Android: JDK 21, Android SDK + NDK
+#   Android: JDK 17 (o gomobile usa javac -source 1.7, recusado do JDK 21 em diante), Android SDK + NDK
 #   iOS:     macOS com Xcode e CocoaPods
 
 GO          ?= go

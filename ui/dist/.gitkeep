@@ -1,0 +1,8 @@
+Esta pasta recebe a interface compilada (`make ui`).
+
+O arquivo existe para que //go:embed all:dist em ui/embed.go encontre algo
+antes do primeiro build da interface — sem ele, go mod tidy, go build e
+go test falham com "no matching files found".
+
+Recriado automaticamente pelo vite.config.ts: o Vite esvazia a pasta a cada
+build e levaria o marcador junto.
