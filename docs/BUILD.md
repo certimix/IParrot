@@ -83,6 +83,23 @@ cd mobile && npx cap open ios # abre no Xcode para rodar em aparelho
 `app.iparrot.messenger` se necessário. Para automatizar na CI, adicione os segredos do certificado e do perfil e um passo
 `xcodebuild archive` + `-exportArchive`.
 
+## Publicar uma versão
+
+Os binários vão para o Releases, não para os artefatos da execução: anexo de release não entra na cota de
+armazenamento do Actions, que no plano Free é de 500 MB e enche rápido (cada execução produz ~242 MB).
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+A tag dispara os cinco jobs e, no fim, o job `release` junta os binários, gera o `SHA256SUMS.txt` e publica com as
+notas de `.github/RELEASE_NOTES.md`. Os artefatos de execução continuam existindo para depuração, mas com retenção de
+7 dias.
+
+O job do iOS roda só em tag ou sob demanda (**Actions → Build IParrot → Run workflow**): é o mais lento e não produz
+nada instalável.
+
 ## Variáveis de ambiente do núcleo
 
 | Variável | Efeito |

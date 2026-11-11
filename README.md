@@ -54,6 +54,15 @@ tema claro/escuro, **português, inglês e espanhol**, e **Configurações > Sob
 Detalhes em [docs/ARQUITETURA.md](docs/ARQUITETURA.md). O que foi estudado em cada repositório está em
 [docs/ESTUDO.md](docs/ESTUDO.md).
 
+## Baixar
+
+Os instaladores ficam em **[Releases](https://github.com/certimix/IParrot/releases)**: `.exe` para Windows 10 e 11,
+`.apk` para Android e um `.tar.gz` para Linux, com `SHA256SUMS.txt` para conferir. Cada tag `v*` publica uma versão
+nova automaticamente.
+
+iPhone e iPad não têm arquivo para baixar: um `.ipa` instalável exige conta Apple Developer. A CI compila o iOS só
+para confirmar que o núcleo continua funcionando lá.
+
 ## Começar
 
 Ver a interface agora, sem núcleo (modo demonstração):

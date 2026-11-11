@@ -60,10 +60,12 @@ jobs:
         with:
           name: iparrot-linux-amd64
           path: iparrot-linux-amd64.tar.gz
+          retention-days: 7
       - uses: actions/upload-artifact@v4
         with:
           name: go-sum
           path: go.sum
+          retention-days: 7
 
   windows:
     name: Windows (.exe)
@@ -99,6 +101,7 @@ jobs:
         with:
           name: iparrot-windows-amd64
           path: build/bin/IParrot.exe
+          retention-days: 7
 
   android:
     name: Android (APK)
@@ -145,11 +148,16 @@ jobs:
         with:
           name: iparrot-android-debug
           path: mobile/android/app/build/outputs/apk/debug/*.apk
+          retention-days: 7
 
+  # Só sob demanda (Actions > Build IParrot > Run workflow) ou em tag: é o job
+  # mais lento de todos e não produz nada instalável, já que um .ipa exige
+  # conta Apple Developer. Serve para saber que o núcleo ainda compila no iOS.
   ios:
     name: iOS (simulador, sem assinatura)
     runs-on: macos-latest
     needs: ui
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -166,3 +174,37 @@ jobs:
       - run: make ios
       # Para gerar um .ipa instalável é preciso uma conta Apple Developer:
       # ver docs/BUILD.md, seção "iOS: assinatura e TestFlight".
+
+  release:
+    name: Publicar release
+    runs-on: ubuntu-latest
+    needs: [linux, windows, android]
+    if: startsWith(github.ref, 'refs/tags/v')
+    # Os anexos de release não entram na cota de armazenamento de artefatos,
+    # ao contrário dos artefatos de execução.
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: baixados
+      - name: Organizar os arquivos
+        run: |
+          set -eux
+          VERSAO="${GITHUB_REF_NAME#v}"
+          mkdir -p dist
+          cp baixados/iparrot-windows-amd64/IParrot.exe   "dist/IParrot-$VERSAO-windows-amd64.exe"
+          cp baixados/iparrot-linux-amd64/*.tar.gz        "dist/iparrot-$VERSAO-linux-amd64.tar.gz"
+          cp baixados/iparrot-android-debug/*.apk         "dist/IParrot-$VERSAO-android-debug.apk"
+          cp baixados/go-sum/go.sum                       "dist/go.sum"
+          (cd dist && sha256sum * > SHA256SUMS.txt)
+          ls -la dist
+      - name: Publicar no Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "IParrot $GITHUB_REF_NAME" \
+            --notes-file .github/RELEASE_NOTES.md
