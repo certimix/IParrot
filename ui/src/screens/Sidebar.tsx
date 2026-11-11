@@ -141,6 +141,16 @@ export function Sidebar() {
 									<div className="name">{c.displayName || t('sidebar.contact')}</div>
 									<div className="preview">{t('sidebar.waitingDetail')}</div>
 								</div>
+								{/* O tempo de espera não é enfeite. Um pedido enviado fica
+								    procurando o outro aparelho em laço, e quando não acha
+								    nunca — servidor de encontro fora do ar, outro lado
+								    desligado — o weshnet não devolve erro nenhum: ele
+								    continua procurando em silêncio. Sem mostrar há quanto
+								    tempo, "não aconteceu nada" e "está procurando há duas
+								    horas" ficam idênticos na tela. */}
+								<div className="side">
+									<span className="stamp">{listStamp(c.sentDate || c.createdDate)}</span>
+								</div>
 							</div>
 						))}
 					</>
