@@ -50,6 +50,9 @@ export const en: Dictionary = {
 	'sidebar.someone': 'Someone',
 	'sidebar.contact': 'Contact',
 	'sidebar.loadingConversations': 'Loading your conversations…',
+	'sidebar.offlineTitle': 'This device is not on the network',
+	'sidebar.offlineBody':
+		'With no connection to any peer, contact requests neither leave nor arrive, and the app has no way to tell you: it just keeps looking, silently. Tap to see the network.',
 	'sidebar.emptyTitle': 'No conversations yet',
 	'sidebar.emptyBody': 'Tap + to add someone by their code, or show your code to a person next to you.',
 	'sidebar.noResultsTitle': 'Nothing found',

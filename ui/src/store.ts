@@ -45,6 +45,17 @@ interface State {
 	theme: Theme
 	toast: { id: number; text: string } | null
 
+	/**
+	 * Quantos pares este nó enxerga agora, ou null enquanto não se sabe.
+	 *
+	 * Existe porque o protocolo falha calado: um pedido de contato enviado
+	 * fica procurando o outro aparelho em laço, sem erro e sem desistir
+	 * (weshnet, contact_request_manager.go). Com o nó isolado, a tela ficaria
+	 * idêntica à de quem está só esperando resposta. Zero aqui é a diferença
+	 * entre "ninguém respondeu ainda" e "este aparelho não está na rede".
+	 */
+	peers: number | null
+
 	start(): Promise<void>
 	/** Reassina o fluxo de eventos do zero (depois de ocultar, bloquear ou desbloquear). */
 	resync(): void
@@ -82,6 +93,10 @@ function upsert(list: Interaction[] | undefined, incoming: Interaction[]): Inter
 
 let toastSeq = 0
 let unsubscribe: (() => void) | null = null
+let peerTimer: ReturnType<typeof setInterval> | null = null
+
+/** De quanto em quanto tempo se pergunta ao núcleo quantos pares há. */
+const PEER_POLL_MS = 15000
 
 export const useStore = create<State>((set, get) => {
 	const handle = (ev: CoreEvent) => {
@@ -165,6 +180,7 @@ export const useStore = create<State>((set, get) => {
 		panel: null,
 		theme: readTheme(),
 		toast: null,
+		peers: null,
 
 		async start() {
 			applyTheme(get().theme)
@@ -174,6 +190,20 @@ export const useStore = create<State>((set, get) => {
 				const core = await connect()
 				set({ core, phase: 'ready' })
 				unsubscribe = core.subscribe(handle, online => set({ online }))
+
+				// A chamada é local (o núcleo roda no próprio aparelho), então
+				// perguntar de quinze em quinze segundos não custa rede.
+				// Falha fica em silêncio de propósito: não saber quantos pares
+				// há é bem menos grave do que encher a tela de erro.
+				const lerPares = () =>
+					void core
+						.network()
+						.then(n => set({ peers: n.connectedPeers }))
+						.catch(() => undefined)
+				lerPares()
+				if (peerTimer) clearInterval(peerTimer)
+				peerTimer = setInterval(lerPares, PEER_POLL_MS)
+
 				if (core.mode === 'p2p') {
 					// Pedidos silenciosos: se forem negados, o app segue funcionando
 					// e só deixa de avisar com a janela fechada.

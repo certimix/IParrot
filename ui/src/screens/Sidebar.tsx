@@ -11,6 +11,7 @@ export function Sidebar() {
 	const core = useStore(s => s.core)
 	const online = useStore(s => s.online)
 	const loaded = useStore(s => s.loaded)
+	const peers = useStore(s => s.peers)
 	const contacts = useStore(s => s.contacts)
 	const conversations = useStore(s => s.conversations)
 	const messages = useStore(s => s.messages)
@@ -154,6 +155,17 @@ export function Sidebar() {
 							</div>
 						))}
 					</>
+				)}
+
+				{/* Nó isolado: nenhum pedido de contato pode sair nem chegar, e o
+				    protocolo não avisa — fica procurando em laço, calado. Sem
+				    esta linha, "ninguém respondeu ainda" e "este aparelho não
+				    está na rede" são a mesma tela. */}
+				{loaded && peers === 0 && (
+					<button className="empty-note alerta" onClick={() => open({ name: 'settings', page: 'network' })}>
+						<strong>{t('sidebar.offlineTitle')}</strong>
+						{t('sidebar.offlineBody')}
+					</button>
 				)}
 
 				{loaded && list.length === 0 && incoming.length === 0 && outgoing.length === 0 && (

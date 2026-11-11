@@ -50,6 +50,9 @@ export const es: Dictionary = {
 	'sidebar.someone': 'Alguien',
 	'sidebar.contact': 'Contacto',
 	'sidebar.loadingConversations': 'Cargando tus conversaciones…',
+	'sidebar.offlineTitle': 'Este dispositivo no está en la red',
+	'sidebar.offlineBody':
+		'Sin conexión con ningún par, las solicitudes de contacto no salen ni llegan, y la aplicación no puede avisarte: sigue buscando en silencio. Toca para ver la red.',
 	'sidebar.emptyTitle': 'Todavía no hay conversaciones',
 	'sidebar.emptyBody': 'Toca + para agregar a alguien con su código, o muéstrale el tuyo.',
 	'sidebar.noResultsTitle': 'No se encontró nada',

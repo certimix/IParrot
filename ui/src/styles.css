@@ -1215,6 +1215,25 @@ a {
 	}
 }
 
+/* Aviso de nó isolado na lista. É botão porque leva à tela de Rede: quem lê
+   isso quer olhar o estado da conexão, não só saber que há problema. */
+.empty-note.alerta {
+	display: grid;
+	gap: 4px;
+	width: 100%;
+	text-align: left;
+	cursor: pointer;
+	font: inherit;
+	color: var(--ink);
+	background: var(--bg-soft);
+	border: 1px solid var(--accent);
+	border-radius: var(--radius-s);
+}
+
+.empty-note.alerta strong {
+	color: var(--accent);
+}
+
 /* Aviso de estado na tela de servidores: informa, não alarma — por isso usa
    o tom de destaque da marca e não o vermelho de erro. */
 .aviso {

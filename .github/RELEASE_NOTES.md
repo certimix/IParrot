@@ -66,3 +66,22 @@ O código do IParrot é proprietário: todos os direitos reservados. As licença
 valendo e acompanham esta distribuição, no app e no repositório.
 
 Projeto independente, sem vínculo com a Berty Technologies.
+
+## Mudanças desta versão
+
+**Diagnóstico quando o contato não aparece.** A versão anterior falhava calada. Um pedido de contato enviado fica
+procurando o outro aparelho em laço, e quando não acha — servidor fora de alcance, outro lado desligado — o protocolo
+não devolve erro nem desiste. Na tela, isso era idêntico a estar só esperando resposta. Agora:
+
+- a lista avisa, em destaque, quando este aparelho não está conectado a par nenhum — e leva direto à tela de Rede;
+- cada pedido em "Aguardando" mostra há quanto tempo está esperando;
+- **Configurações → Rede → Usar meus próprios servidores** lista os endereços que o aparelho está realmente usando.
+  Enquanto você não configura os seus, o IParrot usa os servidores públicos do Berty, e isso não aparecia em lugar
+  nenhum: os campos vinham vazios, como se não houvesse servidor.
+
+**Marca.** A tela Sobre passa a trazer a assinatura AORDIC. O acesso às licenças de terceiros continua onde estava, com
+outro nome: elas acompanham obrigatoriamente qualquer distribuição do aplicativo.
+
+**Para quem compila.** `./build/docker/iparrot.sh apk` monta o APK em container, sem instalar Go, Android SDK, NDK nem
+os dois JDKs na máquina. `make conferir` checa as restrições de build dos onze alvos e as obrigações de licença sem
+precisar de compilador.

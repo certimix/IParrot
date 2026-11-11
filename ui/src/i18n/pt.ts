@@ -60,6 +60,9 @@ export const pt = {
 	'sidebar.someone': 'Alguém',
 	'sidebar.contact': 'Contato',
 	'sidebar.loadingConversations': 'Carregando suas conversas…',
+	'sidebar.offlineTitle': 'Este aparelho não está na rede',
+	'sidebar.offlineBody':
+		'Sem conexão com nenhum outro ponto, pedidos de contato não saem nem chegam, e o aplicativo não tem como avisar: ele fica procurando em silêncio. Toque para ver a rede.',
 	'sidebar.emptyTitle': 'Nenhuma conversa ainda',
 	'sidebar.emptyBody':
 		'Toque em + para adicionar um contato pelo código dele, ou mostre o seu código para alguém.',
