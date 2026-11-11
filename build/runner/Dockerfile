@@ -34,6 +34,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 		unzip \
 		zip \
 		xz-utils \
+		python3 \
 		libgtk-3-dev \
 		libwebkit2gtk-4.1-dev \
 		libicu72 \

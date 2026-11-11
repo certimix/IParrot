@@ -45,6 +45,11 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
           cache-dependency-path: ui/package-lock.json
+      # Antes da interface porque é instantâneo e barra os jobs lentos: se uma
+      # restrição //go:build estiver errada, o Android e o iOS iriam compilar
+      # por vinte minutos para só então falhar com símbolo duplicado.
+      - name: Restrições de build do cofre
+        run: make conferir-tags
       - run: make ui
 
   linux:

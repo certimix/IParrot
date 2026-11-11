@@ -34,12 +34,14 @@ GOMOBILE_JAVA = $(if $(JAVA_HOME_GOMOBILE),env JAVA_HOME="$(JAVA_HOME_GOMOBILE)"
 ANDROID_TARGET ?= android/arm64
 IOS_TARGET  ?= ios,iossimulator
 
-.PHONY: help tools deps test ui daemon run desktop-linux desktop-windows android-core android ios-core ios clean
+.PHONY: help tools deps test conferir-tags ci ui daemon run desktop-linux desktop-windows android-core android ios-core ios clean
 
 help:
 	@echo "make tools            instala a CLI do Wails (builds desktop)"
 	@echo "make deps             resolve dependências Go (gera go.sum)"
 	@echo "make test             roda os testes do núcleo"
+	@echo "make conferir-tags    confere as restrições //go:build dos 11 alvos (não compila)"
+	@echo "make ci               tudo que a CI confere, sem precisar da CI"
 	@echo "make ui               compila a interface (ui/dist)"
 	@echo "make run              sobe o núcleo + interface no navegador (iparrotd)"
 	@echo "make desktop-linux    app desktop para Linux      -> build/bin/iparrot"
@@ -58,6 +60,19 @@ deps:
 
 test:
 	$(GO) test -tags "$(GO_TAGS)" ./core/... ./ui/...
+
+# Confere, sem compilar, que exatamente um arquivo do cofre de chaves vale
+# para cada um dos onze alvos. Esse erro já custou duas execuções inteiras de
+# CI (no iOS, porque GOOS=ios satisfaz também a tag `darwin`) e aqui sai em
+# menos de um segundo, antes dos jobs lentos.
+conferir-tags:
+	python3 scripts/conferir-tags.py --autoteste
+	python3 scripts/conferir-tags.py
+
+# O que a CI confere, rodando na sua máquina — útil quando os minutos do
+# Actions acabam (ver docs/BUILD.md, "Quando os minutos do Actions acabam").
+# `test` e `deps` exigem rede para os módulos Go; `ui` e `conferir-tags` não.
+ci: conferir-tags ui test
 
 ui:
 	cd ui && npm ci && npm run build
