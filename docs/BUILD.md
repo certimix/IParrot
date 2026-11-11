@@ -93,7 +93,10 @@ git tag v0.1.0
 git push origin v0.1.0
 ```
 
-A tag dispara os cinco jobs e, no fim, o job `release` junta os binários, gera o `SHA256SUMS.txt` e publica com as
+Sem poder empurrar tags, há o caminho equivalente pela interface: **Actions → Build IParrot → Run workflow**, com a
+versão no campo `versao` (ex.: `v0.1.0`). O `gh release create` cria a tag junto com o release.
+
+Qualquer um dos dois dispara os cinco jobs e, no fim, o job `release` junta os binários, gera o `SHA256SUMS.txt` e publica com as
 notas de `.github/RELEASE_NOTES.md`. Os artefatos de execução continuam existindo para depuração, mas com retenção de
 7 dias.
 
