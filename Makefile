@@ -34,13 +34,13 @@ GOMOBILE_JAVA = $(if $(JAVA_HOME_GOMOBILE),env JAVA_HOME="$(JAVA_HOME_GOMOBILE)"
 ANDROID_TARGET ?= android/arm64
 IOS_TARGET  ?= ios,iossimulator
 
-.PHONY: help tools deps test conferir-tags ci ui daemon run desktop-linux desktop-windows android-core android ios-core ios clean
+.PHONY: help tools deps test conferir-tags conferir-licencas conferir ci ui daemon run desktop-linux desktop-windows android-core android ios-core ios clean
 
 help:
 	@echo "make tools            instala a CLI do Wails (builds desktop)"
 	@echo "make deps             resolve dependências Go (gera go.sum)"
 	@echo "make test             roda os testes do núcleo"
-	@echo "make conferir-tags    confere as restrições //go:build dos 11 alvos (não compila)"
+	@echo "make conferir         confere restrições de build e licenças (não compila)"
 	@echo "make ci               tudo que a CI confere, sem precisar da CI"
 	@echo "make ui               compila a interface (ui/dist)"
 	@echo "make run              sobe o núcleo + interface no navegador (iparrotd)"
@@ -69,10 +69,19 @@ conferir-tags:
 	python3 scripts/conferir-tags.py --autoteste
 	python3 scripts/conferir-tags.py
 
+# Confere que as obrigações de licença de terceiros seguem íntegras: as duas
+# cópias dos textos (a que acompanha os binários e a que o app mostra em
+# Inspirações) e o NOTICE.md. Fechar o código do IParrot não dispensa nada
+# disso — Apache-2.0 e MIT exigem que os avisos acompanhem a distribuição.
+conferir-licencas:
+	python3 scripts/conferir-licencas.py
+
+conferir: conferir-tags conferir-licencas
+
 # O que a CI confere, rodando na sua máquina — útil quando os minutos do
 # Actions acabam (ver docs/BUILD.md, "Quando os minutos do Actions acabam").
-# `test` e `deps` exigem rede para os módulos Go; `ui` e `conferir-tags` não.
-ci: conferir-tags ui test
+# `test` e `deps` exigem rede para os módulos Go; `conferir` e `ui` não.
+ci: conferir ui test
 
 ui:
 	cd ui && npm ci && npm run build

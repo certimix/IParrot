@@ -15,7 +15,7 @@ O IParrot usa e se inspira nos projetos abaixo. Os textos integrais das licença
 | [berty/go-orbit-db](https://github.com/berty/go-orbit-db) | Dependência Go (via weshnet) | Apache-2.0 | Berty Technologies; portado do OrbitDB (MIT) |
 | [berty/go-ipfs-log](https://github.com/berty/go-ipfs-log) | Dependência Go (via go-orbit-db) | Apache-2.0 | Berty Technologies; portado do ipfs-log (MIT) |
 | [berty/go-ipfs-repo-encrypted](https://github.com/berty/go-ipfs-repo-encrypted) | Dependência Go: repositório IPFS em SQLCipher | Apache-2.0 ou MIT | © 2020 Berty Technologies e colaboradores |
-| GORM SQLite driver (variante SQLCipher do Berty) | **Código copiado** em `core/gormsqlcipher/` | MIT | © 2013–presente Jinzhu |
+| [go-gorm/sqlite](https://github.com/go-gorm/sqlite) — driver GORM SQLite, variante SQLCipher do Berty | **Código copiado** em `core/gormsqlcipher/` | MIT | © 2013–presente Jinzhu |
 
 Trechos adaptados do Berty (Apache-2.0/MIT) estão identificados nos comentários de `core/node/node.go`
 (`loadEncryptedRepo`, `persistentConfig`, `openMessengerDB`).
