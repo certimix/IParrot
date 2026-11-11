@@ -102,6 +102,19 @@ export interface Servers {
 	relays: string[]
 }
 
+/**
+ * O que a leitura devolve: além do que a pessoa gravou, os endereços que o nó
+ * está realmente usando. Os dois diferem quando nada foi configurado, porque
+ * aí o weshnet cai para os servidores públicos do Berty em vez de ficar sem
+ * nenhum — e sem mostrar isso a tela diria "nenhum servidor" enquanto o
+ * aparelho conversa com a infraestrutura de outra gente.
+ */
+export interface ServersState extends Servers {
+	effectiveRdvp: string[]
+	effectiveRelays: string[]
+	usingDefaults: boolean
+}
+
 export interface ExportResult {
 	path: string
 	bytes: number
@@ -146,7 +159,7 @@ export interface Core {
 	sendMessage(conversation: string, text: string): Promise<string>
 	search(query: string): Promise<Interaction[]>
 	network(): Promise<NetworkInfo>
-	servers(): Promise<Servers>
+	servers(): Promise<ServersState>
 	setServers(servers: Servers): Promise<void>
 	exportAccount(): Promise<ExportResult>
 }

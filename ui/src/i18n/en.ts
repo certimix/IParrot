@@ -222,6 +222,9 @@ export const en: Dictionary = {
 		'IParrot has no message server, but it needs two helpers so devices can find each other: a rendezvous point, and a relay for when both sides sit behind a router. Neither reads the messages, which travel end-to-end encrypted.',
 	'servers.lede2':
 		'Left empty, IParrot uses the public servers run by Berty Technologies. Put yours here, one per line, to depend on no one else.',
+	'servers.usingDefaults': 'Right now this device is using these servers:',
+	'servers.usingDefaultsWhy':
+		'These are Berty\u2019s public servers, used while you have not set your own. If your contact never shows up, test first with both devices on the same Wi-Fi: discovery there is local and needs no server at all.',
 	'servers.rdvpLabel': 'Rendezvous points',
 	'servers.relaysLabel': 'Relays',
 	'servers.save': 'Save servers',

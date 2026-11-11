@@ -2,6 +2,7 @@ import type {
 	Account,
 	ExportResult,
 	Servers,
+	ServersState,
 	Contact,
 	Conversation,
 	Core,
@@ -12,6 +13,12 @@ import type {
 	ParsedLink,
 	ShareInfo,
 } from './types'
+
+// Os servidores públicos do Berty, para os quais o weshnet cai quando nada é
+// configurado (weshnet/pkg/ipfsutil/consts.go). Aqui são só para a tela de
+// demonstração mostrar o mesmo aviso que o app real mostra.
+const DEMO_DEFAULT_RDVP = '/ip4/51.15.25.224/udp/4040/quic-v1/p2p/12D3KooWHhDBv6DJJ4XDWjzEXq6sVNEs6VuxsV1WyBBEhPENHzcZ'
+const DEMO_DEFAULT_RELAY = '/ip4/51.15.25.224/udp/6363/quic-v1/p2p/12D3KooWAHcEz4K5XAgRDav9fLuhiRY2wuXip385EmT5RoRkCmjr'
 
 /**
  * Núcleo simulado, usado quando a interface abre sem o núcleo Go
@@ -301,8 +308,16 @@ export class DemoCore implements Core {
 		return this.later(this.interactions.filter(i => i.text?.toLowerCase().includes(q)).map(i => ({ ...i })))
 	}
 
-	servers(): Promise<Servers> {
-		return this.later({ ...this.demoServers })
+	servers(): Promise<ServersState> {
+		const usingDefaults = this.demoServers.rdvp.length === 0 || this.demoServers.relays.length === 0
+		return this.later({
+			...this.demoServers,
+			// No modo demonstração não há nó de verdade; o espelho do que o
+			// weshnet faria basta para a tela mostrar o mesmo aviso.
+			effectiveRdvp: this.demoServers.rdvp.length ? [...this.demoServers.rdvp] : [DEMO_DEFAULT_RDVP],
+			effectiveRelays: this.demoServers.relays.length ? [...this.demoServers.relays] : [DEMO_DEFAULT_RELAY],
+			usingDefaults,
+		})
 	}
 
 	setServers(servers: Servers) {

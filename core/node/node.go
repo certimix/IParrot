@@ -73,6 +73,16 @@ type Node struct {
 	// (conversas ocultas, contatos bloqueados).
 	Local *LocalState
 
+	// EffectiveRdvp e EffectiveRelays são os endereços que este nó está
+	// realmente usando, já contando a queda do weshnet para os servidores
+	// públicos do Berty. Não confunda com LocalState.Servers(), que devolve
+	// só o que a pessoa gravou na tela de Rede.
+	EffectiveRdvp   []string
+	EffectiveRelays []string
+	// UsingDefaultServers diz que pelo menos uma das listas acima veio do
+	// padrão do weshnet, ou seja, depende da infraestrutura do Berty.
+	UsingDefaultServers bool
+
 	dataDir string
 	logger  *zap.Logger
 	closers []func() error
@@ -106,6 +116,26 @@ func Start(ctx context.Context, cfg Config) (_ *Node, err error) {
 	savedRdvp, savedRelays := n.Local.Servers()
 	rdvp := pick(cfg.RdvpMaddrs, savedRdvp)
 	relays := pick(cfg.StaticRelays, savedRelays)
+
+	// Lista vazia não significa "sem servidor": o weshnet cai para os
+	// servidores públicos do Berty quando recebe nil — em service.go
+	// (`opts.P2PRdvpMaddrs == nil` -> DefaultP2PRdvpMaddr) e em
+	// pkg/ipfsutil/mobile.go (idem para PeerStorePeers e P2PStaticRelays).
+	//
+	// Guardamos aqui o que de fato vale, porque sem isso a tela de Rede
+	// mostra "nenhum servidor configurado" enquanto o aparelho conversa com
+	// a infraestrutura do Berty — e aí um problema de conexão fica
+	// impossível de diagnosticar.
+	n.EffectiveRdvp = rdvp
+	if len(n.EffectiveRdvp) == 0 {
+		n.EffectiveRdvp = []string{ipfsutil.DefaultP2PRdvpMaddr}
+		n.UsingDefaultServers = true
+	}
+	n.EffectiveRelays = relays
+	if len(n.EffectiveRelays) == 0 {
+		n.EffectiveRelays = []string{ipfsutil.DefaultP2PStaticRelay}
+		n.UsingDefaultServers = true
+	}
 
 	keys, err := loadOrCreateStorageKeys(cfg.DataDir, cfg.StorageKey)
 	if err != nil {

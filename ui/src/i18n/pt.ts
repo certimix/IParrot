@@ -244,6 +244,9 @@ export const pt = {
 		'O IParrot não tem servidor de mensagens, mas precisa de dois apoios para os aparelhos se acharem: um ponto de encontro (rendezvous) e um relay para quando os dois lados estão atrás de roteador. Nenhum dos dois lê o conteúdo das mensagens, que vai criptografado de ponta a ponta.',
 	'servers.lede2':
 		'Em branco, o IParrot usa os servidores públicos mantidos pela Berty Technologies. Coloque os seus, um por linha, para não depender deles.',
+	'servers.usingDefaults': 'Agora, este aparelho está usando estes servidores:',
+	'servers.usingDefaultsWhy':
+		'São os servidores públicos do Berty, usados enquanto você não põe os seus. Se o seu contato não aparece, teste primeiro com os dois aparelhos na mesma rede Wi-Fi: ali a descoberta é local e não depende de servidor nenhum.',
 	'servers.rdvpLabel': 'Pontos de encontro (rendezvous)',
 	'servers.relaysLabel': 'Relays',
 	'servers.save': 'Salvar servidores',

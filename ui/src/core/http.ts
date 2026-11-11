@@ -7,6 +7,7 @@ import type {
 	NetworkInfo,
 	ParsedLink,
 	Servers,
+	ServersState,
 	ShareInfo,
 } from './types'
 
@@ -165,7 +166,7 @@ export class HttpCore implements Core {
 		return this.call<NetworkInfo>('GET', '/api/v1/network')
 	}
 	servers() {
-		return this.call<Servers>('GET', '/api/v1/servers')
+		return this.call<ServersState>('GET', '/api/v1/servers')
 	}
 	async setServers(servers: Servers) {
 		await this.call('POST', '/api/v1/servers', servers)

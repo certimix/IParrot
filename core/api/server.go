@@ -747,8 +747,14 @@ func (s *Server) handleNetwork(w http.ResponseWriter, r *http.Request) {
 func (s *Server) handleServersGet(w http.ResponseWriter, r *http.Request) {
 	rdvp, relays := s.node.Local.Servers()
 	writeJSON(w, map[string]any{
+		// O que a pessoa gravou (vazio = não mexeu).
 		"rdvp":   orEmpty(rdvp),
 		"relays": orEmpty(relays),
+		// O que o nó está realmente usando. Difere do acima quando o weshnet
+		// caiu para os servidores públicos do Berty.
+		"effectiveRdvp":   orEmpty(s.node.EffectiveRdvp),
+		"effectiveRelays": orEmpty(s.node.EffectiveRelays),
+		"usingDefaults":   s.node.UsingDefaultServers,
 	})
 }
 

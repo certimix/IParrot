@@ -223,6 +223,9 @@ export const es: Dictionary = {
 		'IParrot no tiene servidor de mensajes, pero necesita dos apoyos para que los aparatos se encuentren: un punto de encuentro (rendezvous) y un relay para cuando ambos lados están detrás de un router. Ninguno lee el contenido de los mensajes, que viaja cifrado de extremo a extremo.',
 	'servers.lede2':
 		'En blanco, IParrot usa los servidores públicos de Berty Technologies. Pon los tuyos, uno por línea, para no depender de ellos.',
+	'servers.usingDefaults': 'Ahora mismo este dispositivo usa estos servidores:',
+	'servers.usingDefaultsWhy':
+		'Son los servidores públicos de Berty, usados mientras no pongas los tuyos. Si tu contacto no aparece, prueba primero con los dos dispositivos en la misma red Wi-Fi: ahí el descubrimiento es local y no depende de ningún servidor.',
 	'servers.rdvpLabel': 'Puntos de encuentro (rendezvous)',
 	'servers.relaysLabel': 'Relays',
 	'servers.save': 'Guardar servidores',

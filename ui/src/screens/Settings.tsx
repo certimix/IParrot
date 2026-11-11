@@ -142,6 +142,8 @@ function ServersPage({ onClose, onBack }: { onClose(): void; onBack(): void }) {
 	const [busy, setBusy] = useState(false)
 	const [error, setError] = useState('')
 	const [saved, setSaved] = useState(false)
+	const [usingDefaults, setUsingDefaults] = useState(false)
+	const [effective, setEffective] = useState<string[]>([])
 
 	useEffect(() => {
 		if (!core) return
@@ -152,6 +154,10 @@ function ServersPage({ onClose, onBack }: { onClose(): void; onBack(): void }) {
 				if (cancelled) return
 				setRdvp(s.rdvp.join('\n'))
 				setRelays(s.relays.join('\n'))
+				setUsingDefaults(s.usingDefaults)
+				// Uma lista só, sem repetir: o padrão do Berty é a mesma
+				// máquina fazendo encontro e relay, em portas diferentes.
+				setEffective([...new Set([...s.effectiveRdvp, ...s.effectiveRelays])])
 				setLoaded(true)
 			})
 			.catch(err => !cancelled && setError(err instanceof Error ? err.message : t('servers.readFailed')))
@@ -186,6 +192,21 @@ function ServersPage({ onClose, onBack }: { onClose(): void; onBack(): void }) {
 		<Panel title={t('servers.title')} onClose={onClose} onBack={onBack}>
 			<p className="hint">{t('servers.lede')}</p>
 			<p className="hint">{t('servers.lede2')}</p>
+			{/* Enquanto nada for configurado o weshnet usa os servidores
+			    públicos do Berty. Sem dizer isso aqui, a tela fica com os
+			    campos vazios e passa a impressão de que não há servidor
+			    nenhum — e um problema de conexão vira adivinhação. */}
+			{usingDefaults && effective.length > 0 && (
+				<div className="aviso">
+					<p>{t('servers.usingDefaults')}</p>
+					<ul className="maddrs">
+						{effective.map(a => (
+							<li key={a}>{a}</li>
+						))}
+					</ul>
+					<p className="hint">{t('servers.usingDefaultsWhy')}</p>
+				</div>
+			)}
 			<form onSubmit={save} style={{ display: 'grid', gap: 16 }}>
 				<label className="field">
 					<span>{t('servers.rdvpLabel')}</span>

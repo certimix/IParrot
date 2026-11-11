@@ -72,6 +72,14 @@ chama o protocolo (a ação vale para todos os aparelhos) e guarda em `local.jso
 O mesmo arquivo guarda os servidores próprios (`rdvp`, `relays`), lidos ao subir o nó. Ele fica em texto puro, fora do
 banco criptografado, e por isso só contém chaves públicas, que já circulam pela rede.
 
+**Lista vazia não é "sem servidor".** Quando `P2PRdvpMaddrs` chega `nil`, o weshnet cai para os servidores públicos do
+Berty — em `service.go` (`opts.P2PRdvpMaddrs == nil` → `ipfsutil.DefaultP2PRdvpMaddr`) e em `pkg/ipfsutil/mobile.go`
+(idem para `PeerStorePeers` e `P2PStaticRelays`). Ou seja, de fábrica o IParrot depende da infraestrutura da Berty
+Technologies, hoje em `51.15.25.224`. `Node.EffectiveRdvp`, `Node.EffectiveRelays` e `Node.UsingDefaultServers`
+registram o que de fato vale, e a tela **Configurações → Rede → Usar meus próprios servidores** mostra esses endereços:
+sem isso a tela aparece vazia e dá a impressão de que não há servidor nenhum, o que torna qualquer problema de conexão
+impossível de diagnosticar. Para não depender de terceiros, suba o `server/rdvp/` e configure os endereços nessa tela.
+
 ## Chave de armazenamento
 
 Os três bancos usam a mesma chave de 32 bytes e sais distintos. A chave vem, nesta ordem:
