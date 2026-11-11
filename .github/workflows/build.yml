@@ -22,6 +22,14 @@ permissions:
 env:
   NODE_VERSION: '22'
 
+# Sobre `retention-days: 1` nos artefatos abaixo: a conta tem 500 MB de
+# armazenamento de artefatos, e uma execução completa gera ~240 MB. Com a
+# retenção padrão (90 dias) ou mesmo 7, duas execuções enchem a cota e o
+# GitHub passa a recusar o início dos jobs — a falha aparece como um job que
+# termina em segundos, sem nenhum passo executado e sem log. Os artefatos aqui
+# só existem para o job de release baixá-los na mesma execução, então um dia é
+# mais do que suficiente. Os anexos de release não entram nessa cota.
+
 jobs:
   ui:
     name: Interface (typecheck + build)
@@ -65,12 +73,12 @@ jobs:
         with:
           name: iparrot-linux-amd64
           path: iparrot-linux-amd64.tar.gz
-          retention-days: 7
+          retention-days: 1
       - uses: actions/upload-artifact@v4
         with:
           name: go-sum
           path: go.sum
-          retention-days: 7
+          retention-days: 1
 
   windows:
     name: Windows (.exe)
@@ -106,7 +114,7 @@ jobs:
         with:
           name: iparrot-windows-amd64
           path: build/bin/IParrot.exe
-          retention-days: 7
+          retention-days: 1
 
   android:
     name: Android (APK)
@@ -149,11 +157,13 @@ jobs:
           echo "padrão (Gradle):  $(javac -version 2>&1)"
           echo "gomobile:         $('${{ steps.jdk17.outputs.path }}/bin/javac' -version 2>&1)"
       - run: make android JAVA_HOME_GOMOBILE="${{ steps.jdk17.outputs.path }}"
+      - name: Tamanho do APK
+        run: ls -l --block-size=M mobile/android/app/build/outputs/apk/debug/*.apk
       - uses: actions/upload-artifact@v4
         with:
           name: iparrot-android-debug
           path: mobile/android/app/build/outputs/apk/debug/*.apk
-          retention-days: 7
+          retention-days: 1
 
   # Só sob demanda (Actions > Build IParrot > Run workflow) ou em tag: é o job
   # mais lento de todos e não produz nada instalável, já que um .ipa exige
