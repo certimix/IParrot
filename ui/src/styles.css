@@ -1217,7 +1217,9 @@ a {
 
 /* Assinatura "Desenvolvido por AORDIC" na tela Sobre. */
 .credito {
-	margin: 0;
+	/* Folga própria: a assinatura fica entre o bloco centralizado do logo e o
+	   texto corrido, e sem isto encosta nos dois. */
+	margin: 14px 0 6px;
 	text-align: center;
 	font-size: 0.9rem;
 	color: var(--ink-soft);
