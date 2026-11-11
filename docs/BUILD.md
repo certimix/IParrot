@@ -65,6 +65,35 @@ make android JAVA_HOME_GOMOBILE=/usr/lib/jvm/temurin-17-jdk-amd64
 # saída: mobile/android/app/build/outputs/apk/debug/app-debug.apk
 ```
 
+O APK sai só para `arm64`, que é o que os celulares usam. Para rodar em emulador x86:
+
+```bash
+make android ANDROID_TARGET=android/arm64,android/amd64 JAVA_HOME_GOMOBILE=...
+```
+
+Cada arquitetura soma cerca de 100 MB, porque o nó IPFS inteiro vai compilado dentro do `.so`.
+
+### Assinar para a Play Store
+
+O keystore do Android é auto-assinado e você mesmo gera — não é certificado de autoridade certificadora e não se
+compra:
+
+```bash
+keytool -genkeypair -v -keystore iparrot-release.jks \
+  -alias iparrot -keyalg RSA -keysize 4096 -validity 10000
+```
+
+**Guarde esse arquivo e a senha como você guarda um certificado A1.** Perdido o keystore, não existe mais como
+publicar atualização do mesmo app na Play Store, a não ser que o Play App Signing esteja ativado.
+
+Com ele em mãos, configure `signingConfigs` em `mobile/android/app/build.gradle` e gere o pacote da loja:
+
+```bash
+cd mobile/android && ./gradlew bundleRelease
+```
+
+O `.aab` entrega a cada aparelho só a fatia da arquitetura dele, então o download fica bem menor que o APK.
+
 Para a Play Store: crie um keystore, configure `signingConfigs` em `mobile/android/app/build.gradle` e use
 `./gradlew bundleRelease`.
 

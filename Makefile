@@ -27,7 +27,11 @@ ANDROID_API ?= 23
 # pelo JAVA_HOME, então mexer só na variável não troca o compilador.
 JAVA_HOME_GOMOBILE ?=
 GOMOBILE_JAVA = $(if $(JAVA_HOME_GOMOBILE),env JAVA_HOME="$(JAVA_HOME_GOMOBILE)" PATH="$(JAVA_HOME_GOMOBILE)/bin:$(PATH)",)
-ANDROID_TARGET ?= android/arm64,android/amd64
+# Só arm64: é o que todo celular Android usa hoje. O amd64 serve a emulador e
+# Chromebook, e cada arquitetura a mais soma ~100 MB ao APK, porque o nó IPFS
+# inteiro vai compilado dentro. Para rodar em emulador x86:
+#   make android ANDROID_TARGET=android/arm64,android/amd64
+ANDROID_TARGET ?= android/arm64
 IOS_TARGET  ?= ios,iossimulator
 
 .PHONY: help tools deps test ui daemon run desktop-linux desktop-windows android-core android ios-core ios clean
@@ -75,7 +79,7 @@ android-core:
 	$(GOMOBILE) init
 	mkdir -p mobile/android/app/libs
 	$(GOMOBILE_JAVA) $(GOMOBILE) bind -v \
-		-ldflags "$(GO_LDFLAGS) -extldflags=-Wl,-z,max-page-size=16384" \
+		-ldflags "$(GO_LDFLAGS) -s -w -extldflags=-Wl,-z,max-page-size=16384" \
 		-tags "$(GO_TAGS) noproximitytransport" \
 		-target $(ANDROID_TARGET) -androidapi $(ANDROID_API) \
 		-o mobile/android/app/libs/iparrotcore.aar \
@@ -89,7 +93,7 @@ ios-core:
 	$(GO) install golang.org/x/mobile/cmd/gobind
 	$(GOMOBILE) init
 	CGO_CPPFLAGS=-DHAVE_GETHOSTUUID=0 $(GOMOBILE) bind -v \
-		-ldflags "$(GO_LDFLAGS)" \
+		-ldflags "$(GO_LDFLAGS) -s -w" \
 		-tags "$(GO_TAGS) nowatchdog noproximitytransport" \
 		-target $(IOS_TARGET) -iosversion 14.0 \
 		-o mobile/ios/IParrotCore/Iparrotcore.xcframework \
