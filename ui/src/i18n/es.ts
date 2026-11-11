@@ -264,11 +264,12 @@ export const es: Dictionary = {
 		'Mensajería punto a punto, cifrada de extremo a extremo, que funciona sin servidor central. Disponible para Android, iOS, Windows y Linux con el mismo núcleo.',
 	'about.license':
 		'IParrot es un programa propietario: todos los derechos reservados. Está construido sobre proyectos abiertos, cuyas licencias se aplican y están aquí completas.',
-	'about.inspirations': 'Inspiraciones',
+	'about.developedBy': 'Desarrollado por',
+	'about.licenses': 'Licencias de terceros',
 
-	'inspirations.title': 'Inspiraciones',
+	'inspirations.title': 'Licencias de terceros',
 	'inspirations.lede':
-		'Estos son los proyectos en los que se apoya IParrot o que se estudiaron para crearlo. Sus licencias se aplican y están aquí completas. Toca uno para leer su papel y el texto completo.',
+		'IParrot se apoya en los proyectos de abajo. Sus licencias siguen vigentes y están aquí completas, como ellas exigen. Toca uno para leer su papel y el texto completo.',
 	'inspirations.bundledTitle': 'Código que forma parte de IParrot',
 	'inspirations.studiedTitle': 'Proyectos estudiados, sin código incluido',
 	'inspirations.bundledTag': 'forma parte de la app',

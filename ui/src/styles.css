@@ -26,6 +26,14 @@
 	--bubble-in: #eceeff;
 	--bubble-in-ink: var(--ink);
 
+	/* Prata da assinatura AORDIC. São três paradas porque prata chapada fica
+	   sem graça: o degradê claro-escuro-claro é o que dá a leitura de metal.
+	   No tema claro o tom é puxado para baixo, porque prata de verdade sobre
+	   branco quase não se lê. */
+	--prata: #6b7177;
+	--prata-1: #9aa0a6;
+	--prata-2: #62686e;
+
 	--radius-s: 10px;
 	--radius-m: 16px;
 	--radius-l: 26px;
@@ -51,6 +59,9 @@
 		--bubble-in: #46496c;
 		--bubble-in-ink: #f6eef5;
 		--shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+		--prata: #d4d8dd;
+		--prata-1: #f1f3f5;
+		--prata-2: #aab0b7;
 		color-scheme: dark;
 	}
 }
@@ -71,6 +82,9 @@
 	--bubble-in: #46496c;
 	--bubble-in-ink: #f6eef5;
 	--shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+	--prata: #d4d8dd;
+	--prata-1: #f1f3f5;
+	--prata-2: #aab0b7;
 	color-scheme: dark;
 }
 
@@ -1199,6 +1213,40 @@ a {
 		animation: none !important;
 		transition: none !important;
 	}
+}
+
+/* Assinatura "Desenvolvido por AORDIC" na tela Sobre. */
+.credito {
+	margin: 0;
+	text-align: center;
+	font-size: 0.9rem;
+	color: var(--ink-soft);
+}
+
+.aordic {
+	font-weight: 800;
+	letter-spacing: 0.14em;
+	font-size: 1.02rem;
+	text-decoration: none;
+	/* `color` é a reserva: se background-clip: text não valer, o nome
+	   continua prata e legível em vez de virar um vão transparente. */
+	color: var(--prata);
+	background-image: linear-gradient(100deg, var(--prata-1), var(--prata-2) 48%, var(--prata-1));
+	-webkit-background-clip: text;
+	background-clip: text;
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+	.aordic {
+		-webkit-text-fill-color: transparent;
+	}
+}
+
+.aordic:hover,
+.aordic:focus-visible {
+	text-decoration: underline;
+	text-decoration-color: var(--prata);
+	text-underline-offset: 3px;
 }
 
 .about-mark {

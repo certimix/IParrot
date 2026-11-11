@@ -288,11 +288,12 @@ export const pt = {
 		'Mensageiro ponto a ponto, criptografado de ponta a ponta, que funciona sem servidor central. Disponível para Android, iOS, Windows e Linux com o mesmo núcleo.',
 	'about.license':
 		'O IParrot é um programa proprietário: todos os direitos reservados. Ele é construído sobre projetos abertos, cujas licenças valem e estão aqui na íntegra.',
-	'about.inspirations': 'Inspirações',
+	'about.developedBy': 'Desenvolvido por',
+	'about.licenses': 'Licenças de terceiros',
 
-	'inspirations.title': 'Inspirações',
+	'inspirations.title': 'Licenças de terceiros',
 	'inspirations.lede':
-		'Estes são os projetos em que o IParrot se apoia ou que foram estudados para criá-lo. As licenças deles valem e estão aqui por inteiro. Toque em um para ler o papel dele e o texto completo.',
+		'O IParrot se apoia nos projetos abaixo. As licenças deles continuam valendo e estão aqui por inteiro, como elas exigem. Toque em um para ler o papel dele e o texto completo.',
 	'inspirations.bundledTitle': 'Código que faz parte do IParrot',
 	'inspirations.studiedTitle': 'Projetos estudados, sem código incluído',
 	'inspirations.bundledTag': 'faz parte do app',

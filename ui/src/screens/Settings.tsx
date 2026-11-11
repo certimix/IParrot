@@ -428,10 +428,23 @@ function About({ onClose, onBack, onInspirations }: { onClose(): void; onBack():
 					{core?.mode === 'demo' ? t('about.demoSuffix') : ''}
 				</p>
 			</div>
+			<p className="credito">
+				{t('about.developedBy')}{' '}
+				<a className="aordic" href="https://aordic.com.br" target="_blank" rel="noreferrer noopener">
+					AORDIC
+				</a>
+			</p>
 			<p>{t('about.body')}</p>
 			<p className="hint">{t('about.license')}</p>
-			<button className="btn wide" onClick={onInspirations}>
-				{t('about.inspirations')}
+			{/* Este botão não pode sair daqui. O IParrot é proprietário, mas
+			    depende de Berty e weshnet (Apache-2.0 ou MIT) e embarca uma
+			    cópia do driver GORM/SQLCipher (MIT). As três exigem que o aviso
+			    de direitos autorais e o texto da licença acompanhem toda
+			    distribuição, e num APK não vai arquivo nenhum junto: esta tela é
+			    o único caminho até o usuário. Ver NOTICE.md e
+			    scripts/conferir-licencas.py. */}
+			<button className="btn quiet wide" onClick={onInspirations}>
+				{t('about.licenses')}
 			</button>
 		</Panel>
 	)
