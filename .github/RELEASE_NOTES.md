@@ -62,4 +62,7 @@ O IParrot é construído sobre o [Berty](https://github.com/berty/berty) e o pro
 projetos e suas licenças estão em **Configurações → Sobre → Inspirações**, dentro do app, e em
 [NOTICE.md](../blob/main/NOTICE.md).
 
-Licença: Apache-2.0 ou MIT, à sua escolha. Projeto independente, sem vínculo com a Berty Technologies.
+O código do IParrot é proprietário: todos os direitos reservados. As licenças das partes de terceiros continuam
+valendo e acompanham esta distribuição, no app e no repositório.
+
+Projeto independente, sem vínculo com a Berty Technologies.

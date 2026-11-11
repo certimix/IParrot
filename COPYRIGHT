@@ -1,12 +1,27 @@
-Copyright 2026 os autores do IParrot.
+Copyright 2026 os autores do IParrot. Todos os direitos reservados.
 
-O IParrot é licenciado sob a Apache License, Version 2.0 (ver LICENSE-APACHE)
-ou sob a licença MIT (ver LICENSE-MIT), à sua escolha — o mesmo esquema de
-licença dupla usado pelo Berty e pelo weshnet, dos quais ele deriva.
+O código do IParrot é proprietário: não há licença concedida para usar, copiar,
+modificar ou distribuir este software. Ver o arquivo LICENSE-MIT, mantido com o
+texto "NO LICENSE" por decisão do titular.
 
-Partes de terceiros incluídas neste repositório e suas licenças estão
-descritas em NOTICE.md; os textos integrais ficam em THIRD_PARTY_LICENSES/ e
-também dentro do aplicativo, em Configurações > Sobre > Inspirações.
+Isso vale para o código escrito para o IParrot. NÃO vale para as partes de
+terceiros que ele usa, cujas licenças continuam valendo e precisam ser
+respeitadas na distribuição:
+
+  - Apache-2.0  berty/berty, berty/weshnet, berty/go-orbit-db,
+                berty/go-ipfs-log, berty/go-ipfs-repo-encrypted
+  - MIT         o driver GORM SQLite/SQLCipher copiado em core/gormsqlcipher/
+  - diversas    as dependências transitivas (kubo, go-libp2p, gRPC, GORM, zap,
+                SQLCipher, React, Capacitor e outras)
+
+A licença Apache-2.0 obriga, em cada distribuição, a incluir uma cópia da
+licença, manter os avisos de direitos autorais e indicar os arquivos alterados.
+A licença MIT obriga a manter o aviso de copyright e o texto da licença.
+
+O IParrot cumpre isso de duas formas, e as duas precisam continuar existindo:
+NOTICE.md com THIRD_PARTY_LICENSES/ no repositório, e a tela
+Configurações > Sobre > Inspirações dentro do aplicativo, que traz o texto
+integral de cada licença.
 
 Antes de publicar: troque "os autores do IParrot" pelo titular correto
-(pessoa ou empresa) neste arquivo e em LICENSE-MIT.
+(pessoa ou empresa) neste arquivo.

@@ -262,12 +262,12 @@ export const en: Dictionary = {
 	'about.body':
 		'A peer-to-peer messenger, end-to-end encrypted, that works with no central server. Available for Android, iOS, Windows and Linux with the same core.',
 	'about.license':
-		'IParrot is free software, under the Apache 2.0 or MIT licence, your choice. It exists thanks to open projects — see which ones, and under which licences.',
+		'IParrot is proprietary software: all rights reserved. It is built on open projects, whose licences apply and are reproduced here in full.',
 	'about.inspirations': 'Inspirations',
 
 	'inspirations.title': 'Inspirations',
 	'inspirations.lede':
-		'These are the projects IParrot builds on, or that were studied to create it. Tap one to read its role here and the full licence text.',
+		'These are the projects IParrot builds on, or that were studied to create it. Their licences apply and are reproduced here in full. Tap one to read its role and the complete text.',
 	'inspirations.bundledTitle': 'Code that is part of IParrot',
 	'inspirations.studiedTitle': 'Projects studied, with no code included',
 	'inspirations.bundledTag': 'part of the app',

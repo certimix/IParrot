@@ -1,5 +1,8 @@
 # Avisos de terceiros
 
+**O código do IParrot é proprietário (ver COPYRIGHT). Este arquivo trata das partes de terceiros, cujas licenças
+continuam valendo e acompanham obrigatoriamente qualquer distribuição do aplicativo.**
+
 O IParrot usa e se inspira nos projetos abaixo. Os textos integrais das licenças estão em
 [`THIRD_PARTY_LICENSES/`](THIRD_PARTY_LICENSES) e dentro do app em **Configurações > Sobre > Inspirações**.
 

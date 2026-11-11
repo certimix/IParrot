@@ -106,5 +106,12 @@ Lista completa em [docs/ROADMAP.md](docs/ROADMAP.md).
 
 ## Licença
 
-Apache-2.0 ou MIT, à sua escolha (ver [COPYRIGHT](COPYRIGHT)). Avisos de terceiros em [NOTICE.md](NOTICE.md).
+O código do IParrot é **proprietário**: todos os direitos reservados, sem licença de uso, cópia, modificação ou
+distribuição concedida a terceiros (ver [COPYRIGHT](COPYRIGHT)).
+
+Isso não alcança as partes de terceiros que o aplicativo usa. As licenças delas — Apache-2.0 do Berty e do weshnet,
+MIT do driver GORM copiado, e as das demais dependências — continuam valendo e exigem que os avisos acompanhem cada
+distribuição. Estão em [NOTICE.md](NOTICE.md), em `THIRD_PARTY_LICENSES/` e, dentro do app, em
+**Configurações > Sobre > Inspirações**. Não remova nenhum dos dois.
+
 O IParrot é um projeto independente, não afiliado à Berty Technologies.
