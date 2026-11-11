@@ -126,11 +126,35 @@ Sem poder empurrar tags, há o caminho equivalente pela interface: **Actions →
 versão no campo `versao` (ex.: `v0.1.0`). O `gh release create` cria a tag junto com o release.
 
 Qualquer um dos dois dispara os cinco jobs e, no fim, o job `release` junta os binários, gera o `SHA256SUMS.txt` e publica com as
-notas de `.github/RELEASE_NOTES.md`. Os artefatos de execução continuam existindo para depuração, mas com retenção de
-7 dias.
+notas de `.github/RELEASE_NOTES.md`. Os artefatos de execução continuam existindo para depuração, com retenção de
+1 dia — eles só precisam viver o tempo de o job `release` baixá-los, e duas execuções com retenção maior enchiam os
+500 MB de cota.
 
 O job do iOS roda só em tag ou sob demanda (**Actions → Build IParrot → Run workflow**): é o mais lento e não produz
 nada instalável.
+
+## Quando os minutos do Actions acabam
+
+Em repositório privado o plano Free dá 2.000 minutos por mês. Esgotados, os jobs deixam de iniciar, e a falha engana:
+encerra em dois segundos, sem nenhum passo executado e com o log indisponível. A causa só aparece nas anotações do
+job:
+
+> The job was not started because an Actions budget is preventing further use.
+
+Não confunda com a cota de **armazenamento** de artefatos (500 MB), que é outro limite e dá outra mensagem. Os
+caminhos:
+
+| caminho | custo | prazo |
+| --- | --- | --- |
+| Deixar o repositório público | grátis, minutos ilimitados | imediato, mas o código fica legível por qualquer um |
+| Esperar o ciclo de cobrança virar | grátis | início do ciclo, normalmente dia 1º |
+| Liberar gasto no GitHub | US$ 0,008/min Linux, 2× Windows, 10× macOS | imediato |
+| Runner próprio | energia da máquina | ver `build/runner/README.md` |
+
+O runner próprio não gasta minuto nenhum e é ligado por uma variável do repositório, sem editar o workflow: defina
+`RUNNER_UBUNTU` (em *Settings → Secrets and variables → Actions → Variables*) com a etiqueta do runner, e os jobs
+`ui`, `linux`, `android` e `release` passam a rodar nele. Apagando a variável, tudo volta para os runners do GitHub.
+Windows e iOS continuam no GitHub por exigirem outro sistema operacional.
 
 ## Variáveis de ambiente do núcleo
 

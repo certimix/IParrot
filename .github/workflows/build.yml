@@ -31,9 +31,13 @@ env:
 # mais do que suficiente. Os anexos de release não entram nessa cota.
 
 jobs:
+  # `vars.RUNNER_UBUNTU` nos jobs Linux: em branco (o normal) usa o runner do
+  # GitHub; definida em Settings > Secrets and variables > Actions > Variables
+  # com a etiqueta de um runner próprio (ex.: `iparrot-vps`), os jobs passam a
+  # rodar nele e não gastam minuto de cota. Ver build/runner/README.md.
   ui:
     name: Interface (typecheck + build)
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.RUNNER_UBUNTU || 'ubuntu-latest' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -45,7 +49,7 @@ jobs:
 
   linux:
     name: Linux (desktop + daemon)
-    runs-on: ubuntu-24.04
+    runs-on: ${{ vars.RUNNER_UBUNTU || 'ubuntu-24.04' }}
     needs: ui
     steps:
       - uses: actions/checkout@v4
@@ -57,7 +61,10 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
           cache-dependency-path: ui/package-lock.json
+      # No runner próprio essas bibliotecas já vêm na imagem, e lá não há sudo
+      # de propósito: o container roda como usuário sem privilégio.
       - name: Bibliotecas do WebView
+        if: ${{ !vars.RUNNER_UBUNTU }}
         run: sudo apt-get update && sudo apt-get install -y build-essential libgtk-3-dev libwebkit2gtk-4.1-dev
       - run: make deps tools
       - name: Testes do núcleo
@@ -118,7 +125,7 @@ jobs:
 
   android:
     name: Android (APK)
-    runs-on: ubuntu-24.04
+    runs-on: ${{ vars.RUNNER_UBUNTU || 'ubuntu-24.04' }}
     needs: ui
     steps:
       - uses: actions/checkout@v4
@@ -192,7 +199,7 @@ jobs:
 
   release:
     name: Publicar release
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.RUNNER_UBUNTU || 'ubuntu-latest' }}
     needs: [linux, windows, android]
     # Por tag, ou pelo campo "versao" ao rodar o workflow à mão. O segundo
     # caminho existe porque nem todo ambiente consegue empurrar tags; o

@@ -1,0 +1,87 @@
+# Runner próprio do GitHub Actions para o IParrot.
+#
+#   cd build/runner
+#   cp .env.exemplo .env     # e preencha
+#   docker compose up -d --build
+#   docker compose logs -f
+#
+# ISOLAMENTO — tudo aqui é nomeado com o prefixo `iparrot-runner`, para que
+# nada se confunda com o que já roda no servidor:
+#
+#   container  iparrot-runner
+#   rede       iparrot-runner-rede   (própria, não a bridge padrão)
+#   volumes    iparrot-runner-runtime, iparrot-runner-cache
+#
+# E, de propósito, o que NÃO está aqui:
+#
+#   - nenhuma porta publicada: o runner liga para o GitHub, ninguém liga para
+#     ele, então não há superfície exposta no servidor;
+#   - nenhum bind mount do host: ele não enxerga pasta sua nenhuma;
+#   - nenhum /var/run/docker.sock: um container com o socket do Docker manda
+#     no servidor inteiro, o oposto de isolar;
+#   - privileged: false e no-new-privileges, para que um script de build não
+#     possa escalar privilégio;
+#   - teto de CPU e memória: um build pesado não pode roubar recurso do que
+#     está em produção.
+
+name: iparrot-runner
+
+services:
+  runner:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: iparrot-runner:local
+    container_name: iparrot-runner
+    init: true
+    restart: unless-stopped
+
+    env_file: .env
+    environment:
+      REPO: ${REPO}
+      RUNNER_NAME: ${RUNNER_NAME:-iparrot-vps}
+      RUNNER_LABELS: ${RUNNER_LABELS:-iparrot-vps}
+
+    # ------------------------------------------------------------------
+    # Teto de recurso. Ajuste no .env conforme a folga do servidor.
+    #
+    # O núcleo do IParrot arrasta a árvore do IPFS/libp2p: o compilador Go
+    # chega a pedir perto de 4 GB. Abaixo de 4 GB de teto o build morre por
+    # falta de memória; com 2 GB livres no servidor, é melhor compilar em
+    # outra máquina do que apertar aqui.
+    # ------------------------------------------------------------------
+    cpus: ${RUNNER_CPUS:-2.0}
+    mem_limit: ${RUNNER_MEM:-6g}
+    pids_limit: 4096
+
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+    networks:
+      - rede
+
+    volumes:
+      # O binário do runner e a credencial do registro. É volume nomeado, não
+      # bind: na primeira subida o Docker o preenche com o conteúdo que a
+      # imagem tem em /opt/actions-runner. Consequência a saber: reconstruir a
+      # imagem não troca o runner deste volume — ele se atualiza sozinho de
+      # todo modo; para forçar, `docker compose down -v`.
+      - runtime:/opt/actions-runner
+      # Módulos Go, Gradle e npm, para o segundo build não baixar tudo de novo.
+      - cache:/opt/cache
+
+    # Sem `tmpfs: /tmp` de propósito: tmpfs é memória, e os temporários do
+    # compilador Go contariam contra o mem_limit acima — exatamente onde o
+    # build já aperta. /tmp fica no sistema de arquivos do container.
+
+networks:
+  rede:
+    name: iparrot-runner-rede
+
+volumes:
+  runtime:
+    name: iparrot-runner-runtime
+  cache:
+    name: iparrot-runner-cache
