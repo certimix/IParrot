@@ -1,0 +1,79 @@
+# Bancada de build do IParrot com Android, em cima da bancada base.
+#
+# Por que existe: compilar o APK exige Go, Node, Android SDK, NDK e DOIS JDKs
+# que discordam entre si. Montar isso à mão numa máquina leva uma tarde e suja
+# o sistema. Aqui, um comando:
+#
+#   ./build/docker/iparrot.sh imagem
+#   ./build/docker/iparrot.sh imagem-android
+#   ./build/docker/iparrot.sh apk
+#
+# O APK aparece em mobile/android/app/build/outputs/apk/debug/ na sua pasta,
+# porque o código entra por bind mount. Nada é instalado no host.
+#
+# ATENÇÃO às versões: as ARGs abaixo precisam acompanhar as de
+# build/runner/Dockerfile, que monta o mesmo ferramental para o runner próprio
+# do Actions. Se mudar uma, mude a outra, senão o APK que sai da sua máquina
+# deixa de ser igual ao que sai da CI.
+
+FROM iparrot-build:latest
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+		unzip \
+		zip \
+	&& rm -rf /var/lib/apt/lists/*
+
+# ---------------------------------------------------------------------------
+# Os dois JDKs. O gomobile gera o .aar chamando `javac -source 1.7`, que o 21
+# recusa; o Gradle do Capacitor (AGP 8.7) exige o 21. Vêm da Adoptium porque o
+# bookworm não empacota o 21.
+# ---------------------------------------------------------------------------
+ARG JDK17_URL=https://api.adoptium.net/v3/binary/latest/17/ga/linux/x64/jdk/hotspot/normal/eclipse
+ARG JDK21_URL=https://api.adoptium.net/v3/binary/latest/21/ga/linux/x64/jdk/hotspot/normal/eclipse
+RUN mkdir -p /opt/jdk-17 /opt/jdk-21 \
+	&& curl -fsSL "${JDK17_URL}" | tar -xz -C /opt/jdk-17 --strip-components=1 \
+	&& curl -fsSL "${JDK21_URL}" | tar -xz -C /opt/jdk-21 --strip-components=1 \
+	&& /opt/jdk-17/bin/javac -version \
+	&& /opt/jdk-21/bin/javac -version
+
+ENV JAVA_HOME=/opt/jdk-21 \
+	PATH=/opt/jdk-21/bin:${PATH}
+
+# ---------------------------------------------------------------------------
+# Android SDK e NDK. As versões espelham o projeto: compileSdk/targetSdk 35 e
+# minSdk 23 em mobile/android/variables.gradle, ANDROID_API 23 no Makefile.
+#
+# Se o zip das command-line tools der 404, o número do build mudou: pegue o
+# atual em https://developer.android.com/studio#command-line-tools-only e passe
+# em --build-arg CMDLINE_TOOLS_ZIP=...
+# ---------------------------------------------------------------------------
+ARG CMDLINE_TOOLS_ZIP=commandlinetools-linux-11076708_latest.zip
+ARG ANDROID_PLATFORM=35
+ARG ANDROID_BUILD_TOOLS=35.0.0
+ARG ANDROID_NDK=26.3.11579264
+
+ENV ANDROID_HOME=/opt/android-sdk \
+	ANDROID_SDK_ROOT=/opt/android-sdk
+
+RUN mkdir -p "${ANDROID_HOME}/cmdline-tools" \
+	&& curl -fsSL -o /tmp/cmdline-tools.zip \
+		"https://dl.google.com/android/repository/${CMDLINE_TOOLS_ZIP}" \
+	&& unzip -q /tmp/cmdline-tools.zip -d "${ANDROID_HOME}/cmdline-tools" \
+	&& mv "${ANDROID_HOME}/cmdline-tools/cmdline-tools" "${ANDROID_HOME}/cmdline-tools/latest" \
+	&& rm /tmp/cmdline-tools.zip \
+	# `yes` aceita as licenças: sem isso o sdkmanager espera resposta e a
+	# construção da imagem trava.
+	&& yes | "${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null \
+	&& "${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager" \
+		"platform-tools" \
+		"platforms;android-${ANDROID_PLATFORM}" \
+		"build-tools;${ANDROID_BUILD_TOOLS}" \
+		"ndk;${ANDROID_NDK}"
+
+ENV ANDROID_NDK_HOME=${ANDROID_HOME}/ndk/${ANDROID_NDK} \
+	PATH=${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${PATH}
+
+WORKDIR /src
+CMD ["bash"]
